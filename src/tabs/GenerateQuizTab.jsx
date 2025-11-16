@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import {generateQuiz} from '../services/api.js'
 function GenerateQuizTab({ onQuizGenerated }) {
   const [url, setUrl] = useState("");
   const [quiz, setQuiz] = useState(null);
@@ -10,24 +10,19 @@ function GenerateQuizTab({ onQuizGenerated }) {
     setQuiz(null);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/generate_quiz", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
-      });
+      const data = await generateQuiz(url);
 
-      const data = await res.json();
-      console.log("Response:", data);
+      console.log("API Response:", data);
 
       if (data.status === "success") {
         setQuiz(data.quiz);
-        if(onQuizGenerated) onQuizGenerated(); // notify App to refresh history
+        if (onQuizGenerated) onQuizGenerated();
       } else {
         setError(data.message || "Failed to generate quiz.");
       }
     } catch (err) {
       console.error(err);
-      setError("Error generating quiz");
+      setError("Error generating quiz.");
     }
   };
 
