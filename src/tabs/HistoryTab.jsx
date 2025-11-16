@@ -8,17 +8,27 @@ function HistoryTab({ refresh }) {
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(()=> {
-    getHistory().then(setHistory).catch(console.error);
+  useEffect(() => {
+    getHistory()
+      .then((data) => {
+        console.log("HISTORY RESPONSE:", data);
+
+        // Ensure we always store an array
+        setHistory(Array.isArray(data.history) ? data.history : []);
+      })
+      .catch((err) => console.error("History error:", err));
   }, [refresh]);
 
   const showDetails = async (id) => {
     setLoading(true);
     try {
       const data = await getQuizById(id);
-      setSelectedQuiz(data.quiz);
+      console.log("QUIZ DETAILS:", data);
+
+      // Store quiz object safely
+      setSelectedQuiz(data.quiz || null);
     } catch (e) {
-      alert("Failed to load details");
+      alert("Failed to load quiz details");
     } finally {
       setLoading(false);
     }
@@ -27,7 +37,9 @@ function HistoryTab({ refresh }) {
   return (
     <div className="space-y-4">
       <HistoryTable items={history} onDetails={showDetails} />
+
       {loading && <div>Loading quiz...</div>}
+
       {selectedQuiz && (
         <div className="mt-4">
           <h3 className="text-lg font-bold">Quiz Details</h3>
@@ -35,6 +47,7 @@ function HistoryTab({ refresh }) {
         </div>
       )}
     </div>
-  )
+  );
 }
-export default HistoryTab
+
+export default HistoryTab;
