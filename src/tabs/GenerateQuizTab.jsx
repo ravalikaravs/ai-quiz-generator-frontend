@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function GenerateQuizTab() {
+function GenerateQuizTab({ onQuizGenerated }) {
   const [url, setUrl] = useState("");
   const [quiz, setQuiz] = useState(null);
   const [error, setError] = useState("");
@@ -21,6 +21,7 @@ function GenerateQuizTab() {
 
       if (data.status === "success") {
         setQuiz(data.quiz);
+        if(onQuizGenerated) onQuizGenerated(); // notify App to refresh history
       } else {
         setError(data.message || "Failed to generate quiz.");
       }
@@ -29,6 +30,7 @@ function GenerateQuizTab() {
       setError("Error generating quiz");
     }
   };
+
 
   return (
     <div style={{ padding: "20px" }}>
@@ -46,26 +48,27 @@ function GenerateQuizTab() {
 
       {quiz && (
         <div style={{ marginTop: "20px" }}>
-          <h3>Generated Quiz:</h3>
-          {quiz.raw_text ? (
-            <pre>{quiz.raw_text}</pre>
-          ) : (
-            <ul>
-              {quiz.questions?.map((q, i) => (
-                <li key={i}>
-                  <p><strong>{q.question}</strong></p>
-                  <ul>
-                    {q.options.map((opt, j) => (
-                      <li key={j}>{opt}</li>
-                    ))}
-                  </ul>
-                  <p>Answer: {q.answer}</p>
-                </li>
-              ))}
-            </ul>
-          )}
+          <h3>{quiz.title}</h3>
+          <p><strong>Summary:</strong> {quiz.summary}</p>
+
+          <ul>
+            {quiz.quiz?.map((q, i) => (
+              <li key={i}>
+                <p><strong>{q.question}</strong></p>
+                <ul>
+                  {q.options.map((opt, j) => (
+                    <li key={j}>{opt}</li>
+                  ))}
+                </ul>
+                <p><strong>Answer:</strong> {q.answer}</p>
+                <p><em>Difficulty:</em> {q.difficulty}</p>
+                <p><em>Explanation:</em> {q.explanation}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
+
     </div>
   );
 }

@@ -3,14 +3,14 @@ import { getHistory, getQuizById } from "../services/api";
 import HistoryTable from "../components/HistoryTable";
 import QuizDisplay from "../components/QuizDisplay";
 
-function HistoryTab() {
+function HistoryTab({ refresh }) {
   const [history, setHistory] = useState([]);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(()=> {
     getHistory().then(setHistory).catch(console.error);
-  }, []);
+  }, [refresh]);
 
   const showDetails = async (id) => {
     setLoading(true);
