@@ -1,11 +1,12 @@
-const BASE = "https://ai-quiz-generator-backened.onrender.com";
+const BASE = import.meta.env.VITE_API_BASE_URL;
 
 export async function generateQuiz(url) {
   const res = await fetch(`${BASE}/generate_quiz`, {
     method: "POST",
-    headers: {"Content-Type":"application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ url })
   });
+
   if (!res.ok) throw new Error(`Server error: ${res.status}`);
   return res.json();
 }
